@@ -3,6 +3,14 @@ let list = [{
     id: 1,
     year: '2020',
     month: '01'
+  }, {
+    id: 1,
+    year: '2020',
+    month: '01'
+  }, {
+    id: 1,
+    year: '2020',
+    month: '01'
   },
   {
     id: 2,
@@ -82,3 +90,20 @@ function formate(array) {
 //     content: [{ id: 6, year: '2021', month: '01' }],
 //   }),
 // ]
+
+// 数组对象根据id去重
+let arrFormate = function (arr, type) {
+  if (arr.length === 0) return arr
+  else {
+    if (type) {
+      const obj = {}
+      const newArr = arr.reduce((total, val) => {
+        obj[val.id] ? '' : obj[val.id] = true && total.push(val)
+        return total
+      }, [])
+      return newArr
+    } else return Array.from(new Set(arr))
+  }
+}
+console.log(arrFormate(list, true));
+console.log();
