@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防抖和节流</title>
+</head>
+<body>
+  <!-- 应用场景，
+    1.在用户输入连续一串字符串后，只会在输入完成后去执行最后一次得查询ajax ，这样可以有效减少请求次数，节约资源 
+    2. window 的 resize / scroll 事件， 不断调整浏览器的窗口大小，或者滚动时会触发对应的事件，防抖让其只触发一次
+  
+  -->
+
+  <script type="text/javascript">
+    window.onload = function() {
+      function ajax(params) {
+        console.log('ajax request' + params);
+      }
+      function debounce(fun, delay) {
+        return function (args) {
+          let that = this
+          let _args = args
+          // 每次事件被触发，都会清除当前timer, 然后重写设置超时调用
+          clearInterval(fun.id)
+          fun.id = setTimeout(() => {
+            fun.call(that, _args)
+          }, delay)
+        }
+      }
+      function throttle(fun, delay) {
+        let last, deferTimer
+        return function (args) {
+          let that = this
+          let _args = arguments
+          let now = +new Date()
+          if (last && now < last + delay) {
+            clearTimeout(deferTimer)
+            deferTimer = setTimeout(() => {
+              last = now
+              fun.apply(that, _args)
+            }, delay)
+          } else {
+            last = now
+            fun.apply(that, _args)
+          }
+        }
+      }
+      let inputNormal = document.getElementById('normal')
+      // 防抖
+      let debounceAjax = debounce(ajax, 500)
+      // 节流
+      let throttleAjax = throttle(ajax, 5000)
+      let inputThrottle = document.getElementById('throttle')
+      inputNormal.addEventListener('keyup', function (e) {
+        // ajax(e.target.value)
+        // 防抖
+        debounceAjax(e.target.value)
+      })
+      inputThrottle.addEventListener('keyup', function (e) {
+        // 节流
+        throttleAjax(e.target.value)
+      })
+    }
+  </script>
+
+  <div>
+    <input type="text" name="normal" id="normal">
+    <input type="text" name="throttle" id="throttle">
+  </div>
+</body>
+</html>
